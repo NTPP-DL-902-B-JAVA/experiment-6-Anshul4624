@@ -1,0 +1,52 @@
+import java.util.*;
+import java.util.stream.Collectors;
+
+class Product {
+    private String name;
+    private String category;
+    private double price;
+
+    public Product(String name, String category, double price) {
+        this.name = name;
+        this.category = category;
+        this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+}
+
+public class ProductProcessor {
+    public static void main(String[] args) {
+        List<Product> products = Arrays.asList(
+                new Product("Laptop", "Electronics", 1200),
+                new Product("Smartphone", "Electronics", 800),
+                new Product("Chair", "Furniture", 150),
+                new Product("Table", "Furniture", 300),
+                new Product("TV", "Electronics", 600)
+        );
+
+       
+        Map<String, List<Product>> groupedByCategory = products.stream()
+                .collect(Collectors.groupingBy(Product::getCategory));
+
+     
+        Map<String, Optional<Product>> mostExpensiveProducts = groupedByCategory.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream().max((p1, p2) -> Double.compare(p1.getPrice(), p2.getPrice())) // Lambda expression for max
+                ));
+
+             mostExpensiveProducts.forEach((category, product) -> 
+                System.out.println(category + ": " + product.map(Product::getName).orElse("No product")));
+    }
+}
